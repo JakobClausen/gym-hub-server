@@ -1,0 +1,33 @@
+{
+  "name": "gym-hub-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "watch": "tsc -w",
+    "start": "node dist/index.js",
+    "eslint": "eslint 'src/**/*.ts'",
+    "eslint:fix": "eslint --fix 'src/**/*.ts'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JakobClausen/gym-hub-server.git"
+  },
+  "author": "Jakob Clausen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JakobClausen/gym-hub-server/issues"
+  },
+  "homepage": "https://github.com/JakobClausen/gym-hub-server#readme",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
+    "eslint": "^7.24.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^8.2.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "husky": "^6.0.0",
+    "lint-staged": "^10.5.4"
+  }
+}
