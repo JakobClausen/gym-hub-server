@@ -1,38 +1,28 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
-import { ApolloServer, gql } from "apollo-server-express";
-
-const prisma = new PrismaClient();
-
-const typeDefs = gql`
-  type Query {
-    yo: String
-  }
-`;
-
-const resolvers = {
-  Query: {
-    yo: () => "Yo mt!",
-  },
-};
+import { context } from "./context/prisma";
+import { ApolloServer } from "apollo-server-express";
+import { buildSchema } from "type-graphql";
+import { DateTimeResolver } from "graphql-scalars";
+import { GraphQLScalarType } from "graphql";
+import { UserResolver } from "./resolvers/UserResolver";
 
 const main = async () => {
   const app = express();
+
+  const schema = await buildSchema({
+    resolvers: [UserResolver],
+    scalarsMap: [{ type: GraphQLScalarType, scalar: DateTimeResolver }],
+  });
+
   const server = new ApolloServer({
-    typeDefs,
-    resolvers,
+    schema,
+    context: context,
   });
 
   await server.start();
 
   server.applyMiddleware({ app });
 
-  app.listen(3000, () => console.log("Listening at port 3000!"));
+  app.listen(4000, () => console.log("Listening at port 3000!"));
 };
-main()
-  .catch((e) => {
-    throw e;
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main();
