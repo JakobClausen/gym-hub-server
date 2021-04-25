@@ -1,8 +1,6 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "./context/prisma";
 import { ApolloServer, gql } from "apollo-server-express";
-
-const prisma = new PrismaClient();
 
 const typeDefs = gql`
   type Query {
@@ -21,6 +19,7 @@ const main = async () => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
+    context: prisma,
   });
 
   await server.start();
@@ -29,10 +28,4 @@ const main = async () => {
 
   app.listen(3000, () => console.log("Listening at port 3000!"));
 };
-main()
-  .catch((e) => {
-    throw e;
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main();
