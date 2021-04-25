@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { Field, ID, InputType, ObjectType } from "type-graphql";
-import { IsEmail } from "class-validator";
+import { IsEmail, MinLength } from "class-validator";
 
 @ObjectType()
 export class User {
@@ -14,19 +14,42 @@ export class User {
   updatedAt: Date;
 
   @Field()
-  name: string;
+  firstName: string;
+
+  @Field()
+  lastName: string;
 
   @Field()
   @IsEmail()
   email: string;
+
+  password: string;
 }
 
 @InputType()
-export class CreateUser {
+export class Register {
   @Field()
-  name: string;
+  firstName: string;
+
+  @Field()
+  lastName: string;
 
   @Field()
   @IsEmail()
   email: string;
+
+  @Field()
+  @MinLength(8)
+  password: string;
+}
+
+@InputType()
+export class Login {
+  @Field()
+  @IsEmail()
+  email: string;
+
+  @Field()
+  @MinLength(8)
+  password: string;
 }
