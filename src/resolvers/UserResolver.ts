@@ -1,29 +1,12 @@
-import { User } from "../schema/User";
-import {
-  Arg,
-  Ctx,
-  Field,
-  InputType,
-  Mutation,
-  Query,
-  Resolver,
-} from "type-graphql";
+import { CreateUser, User } from "../schema/User";
+import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { Context } from "../context/prisma";
-
-@InputType()
-class CreateUser {
-  @Field()
-  name: string;
-
-  @Field()
-  email: string;
-}
 
 @Resolver(User)
 export class UserResolver {
-  @Query(() => [User])
-  async getUsers(@Ctx() ctx: Context) {
-    return ctx.prisma.user.findMany();
+  @Query(() => User)
+  async user(@Arg("id") id: number, @Ctx() ctx: Context) {
+    return ctx.prisma.user.findUnique({ where: { id } });
   }
 
   @Mutation(() => User)
