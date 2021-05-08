@@ -5,4 +5,5 @@ export interface Context {
   prisma: PrismaClient;
   req: Request;
   res: Response;
+  payload?: { userId: number };
 }

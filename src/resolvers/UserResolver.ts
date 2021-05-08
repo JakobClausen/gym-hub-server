@@ -7,10 +7,12 @@ import {
   ObjectType,
   Query,
   Resolver,
+  UseMiddleware,
 } from "type-graphql";
 import { Context } from "../context/prisma";
 import bcrypt from "bcrypt";
-import { sign } from "jsonwebtoken";
+import { createAccessToken, createRefreshToken } from "../utils/auth";
+import { isAuth } from "../middleware/isAuth";
 
 @ObjectType()
 class LoginResponse {
@@ -21,8 +23,9 @@ class LoginResponse {
 @Resolver(User)
 export class UserResolver {
   @Query(() => User)
-  async user(@Arg("id") id: number, @Ctx() ctx: Context) {
-    return ctx.prisma.user.findUnique({ where: { id } });
+  @UseMiddleware(isAuth)
+  async me(@Ctx() ctx: Context) {
+    return ctx.prisma.user.findUnique({ where: { id: ctx.payload?.userId } });
   }
 
   @Mutation(() => User)
@@ -51,20 +54,12 @@ export class UserResolver {
       throw new Error("Password is invalid!");
     }
 
-    ctx.res.cookie(
-      "rid",
-      sign({ email: user.email }, process.env.REFRESH_SECRET!, {
-        expiresIn: "7d",
-      }),
-      {
-        httpOnly: true,
-      }
-    );
+    ctx.res.cookie("rid", createRefreshToken(user), {
+      httpOnly: true,
+    });
 
     return {
-      accessToken: sign({ userId: user.id }, process.env.JWT_SECRET!, {
-        expiresIn: "15m",
-      }),
+      accessToken: createAccessToken(user),
     };
   }
 }
