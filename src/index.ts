@@ -1,5 +1,6 @@
+import "reflect-metadata";
 import express from "express";
-import { context } from "./context/prisma";
+import { PrismaClient } from "@prisma/client";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { DateTimeResolver } from "graphql-scalars";
@@ -9,6 +10,8 @@ import { UserResolver } from "./resolvers/UserResolver";
 const main = async () => {
   const app = express();
 
+  const prisma = new PrismaClient();
+
   const schema = await buildSchema({
     resolvers: [UserResolver],
     scalarsMap: [{ type: GraphQLScalarType, scalar: DateTimeResolver }],
@@ -16,13 +19,13 @@ const main = async () => {
 
   const server = new ApolloServer({
     schema,
-    context: context,
+    context: ({ req, res }) => ({ prisma, req, res }),
   });
 
   await server.start();
 
   server.applyMiddleware({ app });
 
-  app.listen(4000, () => console.log("Listening at port 3000!"));
+  app.listen(4000, () => console.log("Listening at port 4000!"));
 };
 main();
