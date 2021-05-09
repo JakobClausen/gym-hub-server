@@ -9,6 +9,7 @@ import { UserResolver } from "./resolvers/UserResolver";
 import cookieParser from "cookie-parser";
 import { verify } from "jsonwebtoken";
 import { createAccessToken, sendRefreshToken } from "./utils/auth";
+import { RefreshTokenPayload } from "./types/jwtTypes";
 
 const main = async () => {
   const app = express();
@@ -31,11 +32,12 @@ const main = async () => {
       return res.send({ ok: false, accessToken: "" });
     }
 
-    let payload: { userId: number };
+    let payload: RefreshTokenPayload;
     try {
-      payload = verify(token, process.env.REFRESH_SECRET!) as {
-        userId: number;
-      };
+      payload = verify(
+        token,
+        process.env.REFRESH_SECRET!
+      ) as RefreshTokenPayload;
     } catch (error) {
       console.log("/refresh_token", error);
       return res.send({ ok: false, accessToken: "" });
