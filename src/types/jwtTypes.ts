@@ -4,4 +4,5 @@ export type AccessTokenPayload = {
 
 export type RefreshTokenPayload = {
   userId: number;
+  tokenVersion: number;
 };

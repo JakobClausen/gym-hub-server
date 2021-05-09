@@ -47,7 +47,7 @@ const main = async () => {
       where: { id: payload.userId },
     });
 
-    if (!user) {
+    if (!user || user.tokenVersion !== payload.tokenVersion) {
       return res.send({ ok: false, accessToken: "" });
     }
 
