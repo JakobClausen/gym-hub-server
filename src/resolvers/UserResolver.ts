@@ -11,7 +11,7 @@ import {
 } from "type-graphql";
 import { Context } from "../context/prisma";
 import bcrypt from "bcrypt";
-import { createAccessToken, createRefreshToken } from "../utils/auth";
+import { createAccessToken, sendRefreshToken } from "../utils/auth";
 import { isAuth } from "../middleware/isAuth";
 
 @ObjectType()
@@ -54,9 +54,7 @@ export class UserResolver {
       throw new Error("Password is invalid!");
     }
 
-    ctx.res.cookie("rid", createRefreshToken(user), {
-      httpOnly: true,
-    });
+    sendRefreshToken(ctx.res, user);
 
     return {
       accessToken: createAccessToken(user),
