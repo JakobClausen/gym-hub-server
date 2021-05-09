@@ -24,6 +24,9 @@ export class User {
   email: string;
 
   password: string;
+
+  @Field()
+  tokenVersion: Number;
 }
 
 @InputType()

@@ -1,13 +1,31 @@
 import { Login, Register, User } from "../schema/User";
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  Field,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+  UseMiddleware,
+} from "type-graphql";
 import { Context } from "../context/prisma";
 import bcrypt from "bcrypt";
+import { createAccessToken, sendRefreshToken } from "../utils/auth";
+import { isAuth } from "../middleware/isAuth";
+
+@ObjectType()
+class LoginResponse {
+  @Field()
+  accessToken: string;
+}
 
 @Resolver(User)
 export class UserResolver {
   @Query(() => User)
-  async user(@Arg("id") id: number, @Ctx() ctx: Context) {
-    return ctx.prisma.user.findUnique({ where: { id } });
+  @UseMiddleware(isAuth)
+  async me(@Ctx() ctx: Context) {
+    return ctx.prisma.user.findUnique({ where: { id: ctx.payload?.userId } });
   }
 
   @Mutation(() => User)
@@ -24,7 +42,7 @@ export class UserResolver {
     });
   }
 
-  @Mutation(() => User)
+  @Mutation(() => LoginResponse)
   async loginUser(@Arg("loginInput") loginInput: Login, @Ctx() ctx: Context) {
     const { email, password } = loginInput;
     const user = await ctx.prisma.user.findUnique({ where: { email } });
@@ -36,6 +54,10 @@ export class UserResolver {
       throw new Error("Password is invalid!");
     }
 
-    return user;
+    sendRefreshToken(ctx.res, user);
+
+    return {
+      accessToken: createAccessToken(user),
+    };
   }
 }

@@ -22,6 +22,8 @@
   "homepage": "https://github.com/JakobClausen/gym-hub-server#readme",
   "devDependencies": {
     "@types/bcrypt": "^3.0.1",
+    "@types/cookie-parser": "^1.4.2",
+    "@types/jsonwebtoken": "^8.5.1",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "eslint": "^7.24.0",
@@ -38,9 +40,11 @@
     "apollo-server-express": "^2.23.0",
     "bcrypt": "^5.0.1",
     "class-validator": "^0.13.1",
+    "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
     "graphql": "^15.5.0",
     "graphql-scalars": "^1.9.1",
+    "jsonwebtoken": "^8.5.1",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "^1.1.1"
   }
