@@ -13,6 +13,7 @@ import { Context } from "../context/prisma";
 import bcrypt from "bcrypt";
 import { createAccessToken, sendRefreshToken } from "../utils/auth";
 import { isAuth } from "../middleware/isAuth";
+import { UserInputError } from "apollo-server-express";
 
 @ObjectType()
 class LoginResponse {
@@ -22,6 +23,11 @@ class LoginResponse {
 
 @Resolver(User)
 export class UserResolver {
+  @Query(() => String)
+  async hello() {
+    return "hi";
+  }
+
   @Query(() => User)
   @UseMiddleware(isAuth)
   async me(@Ctx() ctx: Context) {
@@ -47,11 +53,11 @@ export class UserResolver {
     const { email, password } = loginInput;
     const user = await ctx.prisma.user.findUnique({ where: { email } });
     if (!user) {
-      throw new Error("No user with this email!");
+      throw new UserInputError("No user with this email!");
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new Error("Password is invalid!");
+      throw new UserInputError("Password is invalid!");
     }
 
     sendRefreshToken(ctx.res, user);

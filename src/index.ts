@@ -10,21 +10,13 @@ import cookieParser from "cookie-parser";
 import { verify } from "jsonwebtoken";
 import { createAccessToken, sendRefreshToken } from "./utils/auth";
 import { RefreshTokenPayload } from "./types/jwtTypes";
+import cors from "cors";
 
 const main = async () => {
   const app = express();
+  app.use(cors({ origin: process.env.ORIGIN, credentials: true }));
   app.use(cookieParser());
   const prisma = new PrismaClient();
-
-  const schema = await buildSchema({
-    resolvers: [UserResolver],
-    scalarsMap: [{ type: GraphQLScalarType, scalar: DateTimeResolver }],
-  });
-
-  const server = new ApolloServer({
-    schema,
-    context: ({ req, res }) => ({ prisma, req, res }),
-  });
 
   app.post("/refresh_token", async (req, res) => {
     const token = req.cookies.rid;
@@ -56,9 +48,19 @@ const main = async () => {
     return res.send({ ok: true, accessToken: createAccessToken(user) });
   });
 
+  const schema = await buildSchema({
+    resolvers: [UserResolver],
+    scalarsMap: [{ type: GraphQLScalarType, scalar: DateTimeResolver }],
+  });
+
+  const server = new ApolloServer({
+    schema,
+    context: ({ req, res }) => ({ prisma, req, res }),
+  });
+
   await server.start();
 
-  server.applyMiddleware({ app });
+  server.applyMiddleware({ app, cors: false });
 
   app.listen(4000, () => console.log("Listening at port 4000!"));
 };
