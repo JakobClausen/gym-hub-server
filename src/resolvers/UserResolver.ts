@@ -11,7 +11,11 @@ import {
 } from "type-graphql";
 import { Context } from "../context/prisma";
 import bcrypt from "bcrypt";
-import { createAccessToken, sendRefreshToken } from "../utils/auth";
+import {
+  createAccessToken,
+  createRefreshToken,
+  sendRefreshToken,
+} from "../utils/auth";
 import { isAuth } from "../middleware/isAuth";
 import { UserInputError } from "apollo-server-express";
 
@@ -60,10 +64,17 @@ export class UserResolver {
       throw new UserInputError("Password is invalid!");
     }
 
-    sendRefreshToken(ctx.res, user);
+    sendRefreshToken(ctx.res, createRefreshToken(user));
 
     return {
       accessToken: createAccessToken(user),
     };
+  }
+
+  @Mutation(() => Boolean)
+  async logout(@Ctx() ctx: Context) {
+    sendRefreshToken(ctx.res, "");
+
+    return true;
   }
 }

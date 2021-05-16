@@ -8,7 +8,11 @@ import { GraphQLScalarType } from "graphql";
 import { UserResolver } from "./resolvers/UserResolver";
 import cookieParser from "cookie-parser";
 import { verify } from "jsonwebtoken";
-import { createAccessToken, sendRefreshToken } from "./utils/auth";
+import {
+  createAccessToken,
+  createRefreshToken,
+  sendRefreshToken,
+} from "./utils/auth";
 import { RefreshTokenPayload } from "./types/jwtTypes";
 import cors from "cors";
 
@@ -43,7 +47,7 @@ const main = async () => {
       return res.send({ ok: false, accessToken: "" });
     }
 
-    sendRefreshToken(res, user);
+    sendRefreshToken(res, createRefreshToken(user));
 
     return res.send({ ok: true, accessToken: createAccessToken(user) });
   });
