@@ -8,13 +8,41 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  createdAt DateTime @map("created_at") @default(now())
-  updatedAt DateTime @map("updated_at") @updatedAt
-  firstName String @map("first_name") 
-  lastName String @map("last_name") 
-  email String @unique
-  password String
-  tokenVersion Int @map("token_version")@default(0)
-  @@map("users")
+  id           Int      @id @default(autoincrement())
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  firstName    String   @map("first_name")
+  lastName     String   @map("last_name")
+  email        String   @unique
+  password     String
+  tokenVersion Int      @default(0) @map("token_version")
+  gym          Gym?     @relation(fields: [gymId], references: [id])
+  gymId        Int?     @map("gym_id")
+
+  @@map("user")
+}
+
+model Gym {
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  name      String
+  user      User[]
+  GymClass  GymClass[]
+
+  @@map("gym")
+}
+
+model GymClass {
+  id           Int      @id @default(autoincrement())
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  name         String   @default("Crossfit")
+  dayOfTheWeek Int      @map("day_of_the_week")
+  startTime    String   @map("start_time")
+  endTime      String   @map("end_time")
+  gym          Gym?     @relation(fields: [gymId], references: [id])
+  gymId        Int?     @map("gym_id")
+
+  @@map("gym_class")
 }

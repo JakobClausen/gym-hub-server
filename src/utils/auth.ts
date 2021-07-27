@@ -1,10 +1,10 @@
-import { Response } from "express";
-import { sign } from "jsonwebtoken";
-import { User } from "src/schema/User";
+import { User } from '@prisma/client';
+import { Response } from 'express';
+import { sign } from 'jsonwebtoken';
 
 export const createAccessToken = (user: User) =>
   sign({ userId: user.id }, process.env.ACCESS_TOKEN_SECRET!, {
-    expiresIn: "15m",
+    expiresIn: '3h',
   });
 
 export const createRefreshToken = (user: User) =>
@@ -12,13 +12,13 @@ export const createRefreshToken = (user: User) =>
     { userId: user.id, tokenVersion: user.tokenVersion },
     process.env.REFRESH_SECRET!,
     {
-      expiresIn: "7d",
+      expiresIn: '7d',
     }
   );
 
 export const sendRefreshToken = (res: Response, token: string) => {
-  res.cookie("rid", token, {
+  res.cookie('rid', token, {
     httpOnly: true,
-    path: "/refresh_token",
+    path: '/refresh_token',
   });
 };

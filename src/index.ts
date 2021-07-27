@@ -1,20 +1,20 @@
-import "reflect-metadata";
-import express from "express";
-import { PrismaClient } from "@prisma/client";
-import { ApolloServer } from "apollo-server-express";
-import { buildSchema } from "type-graphql";
-import { DateTimeResolver } from "graphql-scalars";
-import { GraphQLScalarType } from "graphql";
-import { UserResolver } from "./resolvers/UserResolver";
-import cookieParser from "cookie-parser";
-import { verify } from "jsonwebtoken";
+import { PrismaClient } from '@prisma/client';
+import { ApolloServer } from 'apollo-server-express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import express from 'express';
+import { GraphQLScalarType } from 'graphql';
+import { DateTimeResolver } from 'graphql-scalars';
+import { verify } from 'jsonwebtoken';
+import 'reflect-metadata';
+import { buildSchema } from 'type-graphql';
+import { GymResolver, UserResolver } from './resolvers';
+import { RefreshTokenPayload } from './types/jwtTypes';
 import {
   createAccessToken,
   createRefreshToken,
   sendRefreshToken,
-} from "./utils/auth";
-import { RefreshTokenPayload } from "./types/jwtTypes";
-import cors from "cors";
+} from './utils/auth';
 
 const main = async () => {
   const app = express();
@@ -22,10 +22,10 @@ const main = async () => {
   app.use(cookieParser());
   const prisma = new PrismaClient();
 
-  app.post("/refresh_token", async (req, res) => {
+  app.post('/refresh_token', async (req, res) => {
     const token = req.cookies.rid;
     if (!token) {
-      return res.send({ ok: false, accessToken: "" });
+      return res.send({ ok: false, accessToken: '' });
     }
 
     let payload: RefreshTokenPayload;
@@ -35,8 +35,8 @@ const main = async () => {
         process.env.REFRESH_SECRET!
       ) as RefreshTokenPayload;
     } catch (error) {
-      console.log("/refresh_token", error);
-      return res.send({ ok: false, accessToken: "" });
+      console.log('/refresh_token', error);
+      return res.send({ ok: false, accessToken: '' });
     }
 
     const user = await prisma.user.findUnique({
@@ -44,7 +44,7 @@ const main = async () => {
     });
 
     if (!user || user.tokenVersion !== payload.tokenVersion) {
-      return res.send({ ok: false, accessToken: "" });
+      return res.send({ ok: false, accessToken: '' });
     }
 
     sendRefreshToken(res, createRefreshToken(user));
@@ -53,7 +53,7 @@ const main = async () => {
   });
 
   const schema = await buildSchema({
-    resolvers: [UserResolver],
+    resolvers: [UserResolver, GymResolver],
     scalarsMap: [{ type: GraphQLScalarType, scalar: DateTimeResolver }],
   });
 
@@ -66,6 +66,6 @@ const main = async () => {
 
   server.applyMiddleware({ app, cors: false });
 
-  app.listen(4000, () => console.log("Listening at port 4000!"));
+  app.listen(4000, () => console.log('Listening at port 4000!'));
 };
 main();

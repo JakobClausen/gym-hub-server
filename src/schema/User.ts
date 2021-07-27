@@ -1,6 +1,7 @@
-import "reflect-metadata";
-import { Field, ID, InputType, ObjectType } from "type-graphql";
-import { IsEmail, MinLength } from "class-validator";
+import { IsEmail, MinLength } from 'class-validator';
+import 'reflect-metadata';
+import { Field, ID, InputType, ObjectType } from 'type-graphql';
+import { Gym } from './Gym';
 
 @ObjectType()
 export class User {
@@ -26,7 +27,13 @@ export class User {
   password: string;
 
   @Field()
-  tokenVersion: Number;
+  tokenVersion: number;
+
+  @Field(() => Gym)
+  gym?: Gym;
+
+  @Field(() => Number)
+  gymId?: number;
 }
 
 @InputType()

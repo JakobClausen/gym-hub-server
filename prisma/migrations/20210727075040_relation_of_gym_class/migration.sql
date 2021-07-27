@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "gym_class" ADD COLUMN     "gymId" INTEGER,
+ALTER COLUMN "start_time" SET DATA TYPE TEXT,
+ALTER COLUMN "end_time" SET DATA TYPE TEXT;
+
+-- AddForeignKey
+ALTER TABLE "gym_class" ADD FOREIGN KEY ("gymId") REFERENCES "gym"("id") ON DELETE SET NULL ON UPDATE CASCADE;
