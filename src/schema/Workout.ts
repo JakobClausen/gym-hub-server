@@ -1,9 +1,10 @@
-import { Matches, Max, Min } from 'class-validator';
+import { Max, Min } from 'class-validator';
 import { Field, ID, InputType, ObjectType } from 'type-graphql';
 import { Gym } from './Gym';
+import { WorkoutSection } from './WorkoutSection';
 
 @ObjectType()
-export class GymClass {
+export class Workout {
   @Field(() => ID)
   id: number;
 
@@ -19,21 +20,18 @@ export class GymClass {
   @Field(() => Number)
   dayOfTheWeek: number;
 
-  @Field(() => String)
-  startTime: string;
-
-  @Field(() => String)
-  endTime: string;
+  @Field(() => Number)
+  gymId: number;
 
   @Field(() => Gym)
   gym: Gym;
 
-  @Field(() => Number)
-  gymId: number;
+  @Field(() => [WorkoutSection], { nullable: true })
+  workoutSection?: WorkoutSection[];
 }
 
 @InputType()
-export class AddGymClass {
+export class WorkoutInput {
   @Field(() => String, { nullable: true })
   type?: string;
 
@@ -41,12 +39,4 @@ export class AddGymClass {
   @Min(0)
   @Max(6)
   dayOfTheWeek: number;
-
-  @Field(() => String)
-  @Matches(/^([01][0-9]|2[0-3]):([0-5][0-9])$/)
-  startTime: string;
-
-  @Field(() => String)
-  @Matches(/^([01][0-9]|2[0-3]):([0-5][0-9])$/)
-  endTime: string;
 }

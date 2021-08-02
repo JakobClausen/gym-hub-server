@@ -16,8 +16,8 @@ model User {
   email        String   @unique
   password     String
   tokenVersion Int      @default(0) @map("token_version")
-  gym          Gym?     @relation(fields: [gymId], references: [id])
-  gymId        Int?     @map("gym_id")
+  gym          Gym      @relation(fields: [gymId], references: [id])
+  gymId        Int      @map("gym_id")
 
   @@map("user")
 }
@@ -28,7 +28,8 @@ model Gym {
   updatedAt DateTime   @updatedAt @map("updated_at")
   name      String
   user      User[]
-  GymClass  GymClass[]
+  gymClass  GymClass[]
+  workout   Workout[]
 
   @@map("gym")
 }
@@ -37,12 +38,39 @@ model GymClass {
   id           Int      @id @default(autoincrement())
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
-  name         String   @default("Crossfit")
+  type         String   @default("Crossfit")
   dayOfTheWeek Int      @map("day_of_the_week")
   startTime    String   @map("start_time")
   endTime      String   @map("end_time")
-  gym          Gym?     @relation(fields: [gymId], references: [id])
-  gymId        Int?     @map("gym_id")
+  gym          Gym      @relation(fields: [gymId], references: [id])
+  gymId        Int      @map("gym_id")
 
   @@map("gym_class")
+}
+
+model Workout {
+  id             Int              @id @default(autoincrement())
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+  type           String           @default("Crossfit")
+  dayOfTheWeek   Int              @map("day_of_the_week")
+  gym            Gym              @relation(fields: [gymId], references: [id])
+  gymId          Int              @map("gym_id")
+  workoutSection WorkoutSection[]
+
+
+  @@map("workout")
+}
+
+model WorkoutSection {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  title     String
+  body      String
+  order     Int
+  workoutId Int      @map("workout_id")
+  workout   Workout  @relation(fields: [workoutId], references: [id])
+
+  @@map("workout_section")
 }

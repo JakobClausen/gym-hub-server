@@ -33,7 +33,7 @@ export class User {
   gym?: Gym;
 
   @Field(() => Number)
-  gymId?: number;
+  gymId: number;
 }
 
 @InputType()
@@ -51,6 +51,9 @@ export class Register {
   @Field()
   @MinLength(8)
   password: string;
+
+  @Field(() => Number)
+  gymId: number;
 }
 
 @InputType()

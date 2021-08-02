@@ -8,7 +8,9 @@ import { DateTimeResolver } from 'graphql-scalars';
 import { verify } from 'jsonwebtoken';
 import 'reflect-metadata';
 import { buildSchema } from 'type-graphql';
-import { GymResolver, UserResolver } from './resolvers';
+import { GymClassResolver, GymResolver, UserResolver } from './resolvers';
+import { WorkoutResolver } from './resolvers/WorkoutResolver';
+import { WorkoutSectionResolver } from './resolvers/WorkoutSectionResolver';
 import { RefreshTokenPayload } from './types/jwtTypes';
 import {
   createAccessToken,
@@ -53,7 +55,13 @@ const main = async () => {
   });
 
   const schema = await buildSchema({
-    resolvers: [UserResolver, GymResolver],
+    resolvers: [
+      UserResolver,
+      GymResolver,
+      GymClassResolver,
+      WorkoutResolver,
+      WorkoutSectionResolver,
+    ],
     scalarsMap: [{ type: GraphQLScalarType, scalar: DateTimeResolver }],
   });
 

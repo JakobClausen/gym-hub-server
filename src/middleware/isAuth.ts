@@ -1,6 +1,6 @@
 import { verify } from 'jsonwebtoken';
-import { Context } from 'src/context/prisma';
 import { MiddlewareFn } from 'type-graphql';
+import { Context } from '../context/prisma';
 
 export const isAuth: MiddlewareFn<Context> = async ({ context }, next) => {
   const authorization = context.req.headers['authorization'];
@@ -14,7 +14,15 @@ export const isAuth: MiddlewareFn<Context> = async ({ context }, next) => {
     const { userId } = verify(token, process.env.ACCESS_TOKEN_SECRET!) as {
       userId: number;
     };
-    context.payload = { userId };
+    const user = await context.prisma.user.findUnique({
+      where: { id: userId },
+      select: { gymId: true },
+    });
+    if (!user) {
+      throw new Error('Unauthorised');
+    }
+    const { gymId } = user;
+    context.payload = { userId, gymId };
   } catch (error) {
     console.log('isAuth error', error);
     throw new Error('Unauthorised');
