@@ -10,6 +10,7 @@ import {
 import { Context } from '../context/prisma';
 import { isAuth } from '../middleware/isAuth';
 import { Workout, WorkoutInput } from '../schema/Workout';
+import { externalWorkoutApi } from '../service/externalWorkoutApi';
 
 @Resolver(Workout)
 export class WorkoutResolver {
@@ -20,12 +21,25 @@ export class WorkoutResolver {
     @Arg('type') type: string,
     @Ctx() ctx: Context
   ) {
+    const externalApi = await ctx.prisma.workoutExternalApi.findUnique({
+      where: { gymId: ctx.payload.gymId },
+    });
+
+    const workouts = await externalWorkoutApi(externalApi);
+    if (workouts) return workouts;
+
     return await ctx.prisma.workout.findFirst({
       where: { dayOfTheWeek: day, type, gymId: ctx.payload.gymId },
-      include: {
+      select: {
+        type: true,
         workoutSection: {
           orderBy: {
             order: 'asc',
+          },
+          select: {
+            title: true,
+            body: true,
+            order: true,
           },
         },
       },

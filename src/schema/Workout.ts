@@ -17,6 +17,9 @@ export class Workout {
   @Field(() => String)
   type: string;
 
+  @Field(() => String, { nullable: true })
+  externalApiProvider?: string;
+
   @Field(() => Number)
   dayOfTheWeek: number;
 
@@ -34,6 +37,9 @@ export class Workout {
 export class WorkoutInput {
   @Field(() => String, { nullable: true })
   type?: string;
+
+  @Field(() => String, { nullable: true })
+  externalApiProvider?: string;
 
   @Field(() => Number)
   @Min(0)

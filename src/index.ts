@@ -9,6 +9,7 @@ import { verify } from 'jsonwebtoken';
 import 'reflect-metadata';
 import { buildSchema } from 'type-graphql';
 import { GymClassResolver, GymResolver, UserResolver } from './resolvers';
+import { WorkoutExternalApiResolver } from './resolvers/WorkoutExternalApiResolver';
 import { WorkoutResolver } from './resolvers/WorkoutResolver';
 import { WorkoutSectionResolver } from './resolvers/WorkoutSectionResolver';
 import { RefreshTokenPayload } from './types/jwtTypes';
@@ -61,6 +62,7 @@ const main = async () => {
       GymClassResolver,
       WorkoutResolver,
       WorkoutSectionResolver,
+      WorkoutExternalApiResolver,
     ],
     scalarsMap: [{ type: GraphQLScalarType, scalar: DateTimeResolver }],
   });

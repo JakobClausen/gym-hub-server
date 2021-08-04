@@ -23,13 +23,14 @@ model User {
 }
 
 model Gym {
-  id        Int        @id @default(autoincrement())
-  createdAt DateTime   @default(now()) @map("created_at")
-  updatedAt DateTime   @updatedAt @map("updated_at")
-  name      String
-  user      User[]
-  gymClass  GymClass[]
-  workout   Workout[]
+  id                 Int                 @id @default(autoincrement())
+  createdAt          DateTime            @default(now()) @map("created_at")
+  updatedAt          DateTime            @updatedAt @map("updated_at")
+  name               String
+  user               User[]
+  gymClass           GymClass[]
+  workout            Workout[]
+  workoutExternalApi WorkoutExternalApi?
 
   @@map("gym")
 }
@@ -73,4 +74,17 @@ model WorkoutSection {
   workout   Workout  @relation(fields: [workoutId], references: [id])
 
   @@map("workout_section")
+}
+
+model WorkoutExternalApi {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  token     String
+  endpoint  String
+  type      String
+  gym       Gym      @relation(fields: [gymId], references: [id])
+  gymId     Int      @unique
+
+  @@map("workout_external_api")
 }
