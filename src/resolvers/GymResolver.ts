@@ -15,7 +15,7 @@ import { Gym, RegisterGym } from '../schema/Gym';
 export class GymResolver {
   @Query(() => Gym)
   @UseMiddleware(isAuth)
-  async myGym(@Ctx() ctx: Context) {
+  async getGym(@Ctx() ctx: Context) {
     const user = await ctx.prisma.user.findUnique({
       where: { id: ctx.payload?.userId },
     });

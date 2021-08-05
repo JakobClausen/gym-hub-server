@@ -29,7 +29,7 @@ class LoginResponse {
 export class UserResolver {
   @Query(() => User)
   @UseMiddleware(isAuth)
-  async me(@Ctx() ctx: Context) {
+  async getUser(@Ctx() ctx: Context) {
     return ctx.prisma.user.findUnique({
       where: { id: ctx.payload?.userId },
       include: { gym: true },

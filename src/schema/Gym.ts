@@ -1,5 +1,8 @@
 import { Field, ID, InputType, ObjectType } from 'type-graphql';
+import { GymClass } from './GymClass';
 import { User } from './User';
+import { Workout } from './Workout';
+import { WorkoutExternalApi } from './WorkoutExternalApi';
 
 @ObjectType()
 export class Gym {
@@ -15,8 +18,20 @@ export class Gym {
   @Field(() => String)
   name: String;
 
-  @Field(() => User)
+  @Field(() => String)
+  logoUrl: String;
+
+  @Field(() => [User])
   user: User[];
+
+  @Field(() => [GymClass])
+  gymClass: GymClass[];
+
+  @Field(() => [Workout])
+  workout: Workout[];
+
+  @Field(() => WorkoutExternalApi)
+  workoutExternalApi: WorkoutExternalApi;
 }
 
 @InputType()
