@@ -50,3 +50,17 @@ export class AddGymClass {
   @Matches(/^([01][0-9]|2[0-3]):([0-5][0-9])$/)
   endTime: string;
 }
+
+@InputType()
+export class UpdateGymClass {
+  @Field(() => String, { nullable: true })
+  type?: string;
+
+  @Field(() => String, { nullable: true })
+  @Matches(/^([01][0-9]|2[0-3]):([0-5][0-9])$/)
+  startTime?: string;
+
+  @Field(() => String, { nullable: true })
+  @Matches(/^([01][0-9]|2[0-3]):([0-5][0-9])$/)
+  endTime?: string;
+}
