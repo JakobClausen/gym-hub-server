@@ -43,17 +43,33 @@ export class GymClassResolver {
     }
   }
 
-  @Mutation(() => GymClass)
+  @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async createGymClass(
     @Arg('createGymClass') input: AddGymClass,
     @Ctx() ctx: Context
   ) {
-    return ctx.prisma.gymClass.create({
-      data: {
-        ...input,
-        gymId: ctx.payload?.gymId,
-      },
-    });
+    try {
+      await ctx.prisma.gymClass.create({
+        data: {
+          ...input,
+          gymId: ctx.payload?.gymId,
+        },
+      });
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async deleteGymClass(@Arg('id') id: number, @Ctx() ctx: Context) {
+    try {
+      await ctx.prisma.gymClass.delete({ where: { id } });
+      return true;
+    } catch (error) {
+      throw new UserInputError('Unable to delete schedule!');
+    }
   }
 }
