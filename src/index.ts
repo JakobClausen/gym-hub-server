@@ -5,6 +5,7 @@ import cors from 'cors';
 import express from 'express';
 import { GraphQLScalarType } from 'graphql';
 import { DateTimeResolver } from 'graphql-scalars';
+import helmet from 'helmet';
 import { verify } from 'jsonwebtoken';
 import 'reflect-metadata';
 import { buildSchema } from 'type-graphql';
@@ -23,6 +24,7 @@ const main = async () => {
   const app = express();
   app.use(cors({ origin: process.env.ORIGIN, credentials: true }));
   app.use(cookieParser());
+  app.use(helmet());
   const prisma = new PrismaClient();
 
   app.post('/refresh_token', async (req, res) => {
