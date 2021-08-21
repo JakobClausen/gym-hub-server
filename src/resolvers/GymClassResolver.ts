@@ -17,7 +17,7 @@ export class GymClassResolver {
   @UseMiddleware(isAuth)
   async classes(@Ctx() ctx: Context, @Arg('day') day: number) {
     return ctx.prisma.gymClass.findMany({
-      where: { gymId: ctx.payload.gymId, dayOfTheWeek: day },
+      where: { gymId: ctx.payload.user.gymId, dayOfTheWeek: day },
       orderBy: { startTime: 'asc' },
     });
   }
@@ -53,7 +53,7 @@ export class GymClassResolver {
       await ctx.prisma.gymClass.create({
         data: {
           ...input,
-          gymId: ctx.payload?.gymId,
+          gymId: ctx.payload?.user.gymId,
         },
       });
       return true;

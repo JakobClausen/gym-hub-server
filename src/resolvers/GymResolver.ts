@@ -17,7 +17,7 @@ export class GymResolver {
   @UseMiddleware(isAuth)
   async getGym(@Ctx() ctx: Context) {
     const user = await ctx.prisma.user.findUnique({
-      where: { id: ctx.payload?.userId },
+      where: { id: ctx.payload?.user.id },
     });
     if (!user?.gymId) {
       throw new UserInputError('No user with this email!');

@@ -20,7 +20,7 @@ export class WorkoutExternalApiResolver {
   @UseMiddleware(isAuth)
   async getWorkoutExternalApi(@Ctx() ctx: Context) {
     return await ctx.prisma.workoutExternalApi.findFirst({
-      where: { gymId: ctx.payload.gymId },
+      where: { gymId: ctx.payload.user.gymId },
     });
   }
 
@@ -30,7 +30,7 @@ export class WorkoutExternalApiResolver {
     @Arg('workoutExternalApiInput') input: WorkoutExternalApiInput,
     @Ctx() ctx: Context
   ) {
-    const { gymId } = ctx.payload;
+    const { gymId } = ctx.payload.user;
     const workout = await ctx.prisma.workoutExternalApi.findUnique({
       where: { gymId },
     });

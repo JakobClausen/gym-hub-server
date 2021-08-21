@@ -33,7 +33,7 @@ export class UserResolver {
   @UseMiddleware(isAuth)
   async getUser(@Ctx() ctx: Context) {
     return ctx.prisma.user.findUnique({
-      where: { id: ctx.payload?.userId },
+      where: { id: ctx.payload?.user.id },
       include: { gym: true },
     });
   }

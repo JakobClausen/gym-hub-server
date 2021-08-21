@@ -22,14 +22,14 @@ export class WorkoutResolver {
     @Ctx() ctx: Context
   ) {
     const externalApi = await ctx.prisma.workoutExternalApi.findUnique({
-      where: { gymId: ctx.payload.gymId },
+      where: { gymId: ctx.payload.user.gymId },
     });
 
     const workouts = await externalWorkoutApi(externalApi);
     if (workouts) return workouts;
 
     return await ctx.prisma.workout.findFirst({
-      where: { dayOfTheWeek: day, type, gymId: ctx.payload.gymId },
+      where: { dayOfTheWeek: day, type, gymId: ctx.payload.user.gymId },
       select: {
         type: true,
         workoutSection: {
@@ -53,7 +53,7 @@ export class WorkoutResolver {
     @Ctx() ctx: Context
   ) {
     const { dayOfTheWeek, type } = input;
-    const { gymId } = ctx.payload;
+    const { gymId } = ctx.payload.user;
     const workout = await ctx.prisma.workout.findFirst({
       where: { dayOfTheWeek, type, gymId },
     });
