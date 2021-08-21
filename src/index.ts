@@ -3,12 +3,14 @@ import { ApolloServer } from 'apollo-server-express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
+import jwt, { Options } from 'express-jwt';
 import { GraphQLScalarType } from 'graphql';
 import { DateTimeResolver } from 'graphql-scalars';
 import helmet from 'helmet';
 import { verify } from 'jsonwebtoken';
 import 'reflect-metadata';
 import { buildSchema } from 'type-graphql';
+import { authChecker } from './middleware/AuthChecker';
 import { GymClassResolver, GymResolver, UserResolver } from './resolvers';
 import { WorkoutExternalApiResolver } from './resolvers/WorkoutExternalApiResolver';
 import { WorkoutResolver } from './resolvers/WorkoutResolver';
@@ -67,12 +69,21 @@ const main = async () => {
       WorkoutExternalApiResolver,
     ],
     scalarsMap: [{ type: GraphQLScalarType, scalar: DateTimeResolver }],
+    authChecker,
   });
 
   const server = new ApolloServer({
     schema,
     context: ({ req, res }) => ({ prisma, req, res }),
   });
+
+  app.use(
+    '/graphql',
+    jwt({
+      secret: 'TypeGraphQL',
+      credentialsRequired: false,
+    } as Options)
+  );
 
   await server.start();
 

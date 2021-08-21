@@ -16,13 +16,11 @@ export const isAuth: MiddlewareFn<Context> = async ({ context }, next) => {
     };
     const user = await context.prisma.user.findUnique({
       where: { id: userId },
-      select: { gymId: true },
     });
     if (!user) {
       throw new Error('Unauthorised');
     }
-    const { gymId } = user;
-    context.payload = { userId, gymId };
+    context.payload = { user };
   } catch (error) {
     console.log('isAuth error', error);
     throw new Error('Unauthorised');

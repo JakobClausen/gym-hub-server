@@ -2,6 +2,7 @@ import { UserInputError } from 'apollo-server-express';
 import bcrypt from 'bcrypt';
 import {
   Arg,
+  Authorized,
   Ctx,
   Field,
   Mutation,
@@ -27,6 +28,7 @@ class LoginResponse {
 
 @Resolver(User)
 export class UserResolver {
+  @Authorized()
   @Query(() => User)
   @UseMiddleware(isAuth)
   async getUser(@Ctx() ctx: Context) {
