@@ -15,6 +15,7 @@ model User {
   lastName     String   @map("last_name")
   email        String   @unique
   password     String
+  role         String   @default("COACH")
   tokenVersion Int      @default(0) @map("token_version")
   gym          Gym      @relation(fields: [gymId], references: [id])
   gymId        Int      @map("gym_id")

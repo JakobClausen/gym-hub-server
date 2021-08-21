@@ -10,7 +10,8 @@ export const authChecker: AuthChecker<authCheckerContext> = (
   roles
 ) => {
   const { user } = payload;
-  if (!roles.length) return !!user;
   if (!user) return false;
+  if (!roles.length) return true;
+  if (roles.includes(user.role)) return true;
   return false;
 };
