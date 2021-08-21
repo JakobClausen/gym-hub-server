@@ -3,10 +3,8 @@ import { ApolloServer } from 'apollo-server-express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
-import jwt, { Options } from 'express-jwt';
 import { GraphQLScalarType } from 'graphql';
 import { DateTimeResolver } from 'graphql-scalars';
-import helmet from 'helmet';
 import { verify } from 'jsonwebtoken';
 import 'reflect-metadata';
 import { buildSchema } from 'type-graphql';
@@ -26,7 +24,7 @@ const main = async () => {
   const app = express();
   app.use(cors({ origin: process.env.ORIGIN, credentials: true }));
   app.use(cookieParser());
-  app.use(helmet());
+  // app.use(helmet());
   const prisma = new PrismaClient();
 
   app.post('/refresh_token', async (req, res) => {
@@ -76,14 +74,6 @@ const main = async () => {
     schema,
     context: ({ req, res }) => ({ prisma, req, res }),
   });
-
-  app.use(
-    '/graphql',
-    jwt({
-      secret: 'TypeGraphQL',
-      credentialsRequired: false,
-    } as Options)
-  );
 
   await server.start();
 

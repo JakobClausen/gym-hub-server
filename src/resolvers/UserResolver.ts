@@ -11,6 +11,7 @@ import {
   Resolver,
   UseMiddleware,
 } from 'type-graphql';
+import { authorizationRoles } from '../constants/auth';
 import { Context } from '../context/prisma';
 import { isAuth } from '../middleware/isAuth';
 import { Login, Register, User } from '../schema/User';
@@ -32,12 +33,14 @@ export class UserResolver {
   @Query(() => User)
   @UseMiddleware(isAuth)
   async getUser(@Ctx() ctx: Context) {
+    console.log(ctx.payload);
     return ctx.prisma.user.findUnique({
       where: { id: ctx.payload?.user.id },
       include: { gym: true },
     });
   }
 
+  @Authorized([authorizationRoles.ADMIN])
   @Mutation(() => User)
   async registerUser(
     @Arg('registerUser') registerInput: Register,
@@ -71,6 +74,7 @@ export class UserResolver {
     };
   }
 
+  @Authorized()
   @Mutation(() => Boolean)
   async logout(@Ctx() ctx: Context) {
     sendRefreshToken(ctx.res, '');
