@@ -1,10 +1,12 @@
 import { UserInputError } from 'apollo-server-express';
-import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { authorizationRoles } from '../constants/auth';
 import { Context } from '../context/prisma';
 import { AddGymClass, GymClass, UpdateGymClass } from '../schema/GymClass';
 
 @Resolver(GymClass)
 export class GymClassResolver {
+  @Authorized()
   @Query(() => [GymClass])
   async classes(@Ctx() ctx: Context, @Arg('day') day: number) {
     return ctx.prisma.gymClass.findMany({
@@ -13,6 +15,7 @@ export class GymClassResolver {
     });
   }
 
+  @Authorized([authorizationRoles.COACH])
   @Mutation(() => GymClass)
   async updateGymClass(
     @Arg('id') id: number,
@@ -33,6 +36,7 @@ export class GymClassResolver {
     }
   }
 
+  @Authorized([authorizationRoles.COACH])
   @Mutation(() => Boolean)
   async createGymClass(
     @Arg('createGymClass') input: AddGymClass,
@@ -51,6 +55,7 @@ export class GymClassResolver {
     }
   }
 
+  @Authorized([authorizationRoles.COACH])
   @Mutation(() => Boolean)
   async deleteGymClass(@Arg('id') id: number, @Ctx() ctx: Context) {
     try {

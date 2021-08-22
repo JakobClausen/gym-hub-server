@@ -1,11 +1,13 @@
 import { UserInputError } from 'apollo-server-express';
-import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { authorizationRoles } from '../constants/auth';
 import { Context } from '../context/prisma';
 import { Workout, WorkoutInput } from '../schema/Workout';
 import { externalWorkoutApi } from '../service/externalWorkoutApi';
 
 @Resolver(Workout)
 export class WorkoutResolver {
+  @Authorized()
   @Query(() => Workout)
   async getWorkoutByDay(
     @Arg('day') day: number,
@@ -36,7 +38,7 @@ export class WorkoutResolver {
       },
     });
   }
-
+  @Authorized([authorizationRoles.ADMIN])
   @Mutation(() => Workout)
   async createWorkout(
     @Arg('workoutIntput') input: WorkoutInput,
