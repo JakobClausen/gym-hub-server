@@ -1,14 +1,6 @@
 import { UserInputError } from 'apollo-server-express';
-import {
-  Arg,
-  Ctx,
-  Mutation,
-  Query,
-  Resolver,
-  UseMiddleware,
-} from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { Context } from '../context/prisma';
-import { isAuth } from '../middleware/isAuth';
 import {
   WorkoutExternalApi,
   WorkoutExternalApiInput,
@@ -17,7 +9,6 @@ import {
 @Resolver(WorkoutExternalApi)
 export class WorkoutExternalApiResolver {
   @Query(() => WorkoutExternalApi)
-  @UseMiddleware(isAuth)
   async getWorkoutExternalApi(@Ctx() ctx: Context) {
     return await ctx.prisma.workoutExternalApi.findFirst({
       where: { gymId: ctx.payload.user.gymId },
@@ -25,7 +16,6 @@ export class WorkoutExternalApiResolver {
   }
 
   @Mutation(() => WorkoutExternalApi)
-  @UseMiddleware(isAuth)
   async createWorkoutExternalApi(
     @Arg('workoutExternalApiInput') input: WorkoutExternalApiInput,
     @Ctx() ctx: Context

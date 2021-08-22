@@ -1,20 +1,11 @@
 import { UserInputError } from 'apollo-server-express';
-import {
-  Arg,
-  Ctx,
-  Mutation,
-  Query,
-  Resolver,
-  UseMiddleware,
-} from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { Context } from '../context/prisma';
-import { isAuth } from '../middleware/isAuth';
 import { AddGymClass, GymClass, UpdateGymClass } from '../schema/GymClass';
 
 @Resolver(GymClass)
 export class GymClassResolver {
   @Query(() => [GymClass])
-  @UseMiddleware(isAuth)
   async classes(@Ctx() ctx: Context, @Arg('day') day: number) {
     return ctx.prisma.gymClass.findMany({
       where: { gymId: ctx.payload.user.gymId, dayOfTheWeek: day },
@@ -23,7 +14,6 @@ export class GymClassResolver {
   }
 
   @Mutation(() => GymClass)
-  @UseMiddleware(isAuth)
   async updateGymClass(
     @Arg('id') id: number,
     @Arg('updateGymClass') input: UpdateGymClass,
@@ -44,7 +34,6 @@ export class GymClassResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseMiddleware(isAuth)
   async createGymClass(
     @Arg('createGymClass') input: AddGymClass,
     @Ctx() ctx: Context
@@ -63,7 +52,6 @@ export class GymClassResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseMiddleware(isAuth)
   async deleteGymClass(@Arg('id') id: number, @Ctx() ctx: Context) {
     try {
       await ctx.prisma.gymClass.delete({ where: { id } });
