@@ -1,7 +1,6 @@
 import { UserInputError } from 'apollo-server-express';
 import {
   Arg,
-  Authorized,
   Ctx,
   Mutation,
   Query,
@@ -17,7 +16,6 @@ import {
 
 @Resolver(WorkoutExternalApi)
 export class WorkoutExternalApiResolver {
-  @Authorized()
   @Query(() => WorkoutExternalApi)
   @UseMiddleware(isAuth)
   async getWorkoutExternalApi(@Ctx() ctx: Context) {
@@ -26,7 +24,6 @@ export class WorkoutExternalApiResolver {
     });
   }
 
-  @Authorized()
   @Mutation(() => WorkoutExternalApi)
   @UseMiddleware(isAuth)
   async createWorkoutExternalApi(

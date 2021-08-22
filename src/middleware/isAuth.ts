@@ -4,7 +4,6 @@ import { Context } from '../context/prisma';
 
 export const isAuth: MiddlewareFn<Context> = async ({ context }, next) => {
   const authorization = context.req.headers['authorization'];
-  console.log('authorization', authorization);
   if (!authorization) {
     throw new Error('Unauthorised');
   }
@@ -14,7 +13,6 @@ export const isAuth: MiddlewareFn<Context> = async ({ context }, next) => {
     const { userId } = verify(token, process.env.ACCESS_TOKEN_SECRET!) as {
       userId: number;
     };
-    console.log('userId', userId);
     const user = await context.prisma.user.findUnique({
       where: { id: userId },
     });

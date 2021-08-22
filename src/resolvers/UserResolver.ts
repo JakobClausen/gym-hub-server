@@ -30,10 +30,9 @@ class LoginResponse {
 @Resolver(User)
 export class UserResolver {
   @Authorized()
-  @Query(() => User)
   @UseMiddleware(isAuth)
+  @Query(() => User)
   async getUser(@Ctx() ctx: Context) {
-    console.log(ctx.payload);
     return ctx.prisma.user.findUnique({
       where: { id: ctx.payload?.user.id },
       include: { gym: true },
