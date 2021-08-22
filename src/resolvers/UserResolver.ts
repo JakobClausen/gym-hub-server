@@ -9,11 +9,9 @@ import {
   ObjectType,
   Query,
   Resolver,
-  UseMiddleware,
 } from 'type-graphql';
 import { authorizationRoles } from '../constants/auth';
 import { Context } from '../context/prisma';
-import { isAuth } from '../middleware/isAuth';
 import { Login, Register, User } from '../schema/User';
 import {
   createAccessToken,
@@ -30,9 +28,9 @@ class LoginResponse {
 @Resolver(User)
 export class UserResolver {
   @Authorized()
-  @UseMiddleware(isAuth)
   @Query(() => User)
   async getUser(@Ctx() ctx: Context) {
+    console.log(ctx.payload.user);
     return ctx.prisma.user.findUnique({
       where: { id: ctx.payload?.user.id },
       include: { gym: true },
