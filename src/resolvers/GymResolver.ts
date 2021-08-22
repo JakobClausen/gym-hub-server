@@ -1,23 +1,16 @@
 import { UserInputError } from 'apollo-server-express';
-import {
-  Arg,
-  Ctx,
-  Mutation,
-  Query,
-  Resolver,
-  UseMiddleware,
-} from 'type-graphql';
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { authorizationRoles } from '../constants/auth';
 import { Context } from '../context/prisma';
-import { isAuth } from '../middleware/isAuth';
 import { Gym, RegisterGym } from '../schema/Gym';
 
 @Resolver(Gym)
 export class GymResolver {
+  @Authorized()
   @Query(() => Gym)
-  @UseMiddleware(isAuth)
   async getGym(@Ctx() ctx: Context) {
     const user = await ctx.prisma.user.findUnique({
-      where: { id: ctx.payload?.userId },
+      where: { id: ctx.payload?.user.id },
     });
     if (!user?.gymId) {
       throw new UserInputError('No user with this email!');
@@ -27,8 +20,8 @@ export class GymResolver {
     });
   }
 
+  @Authorized([authorizationRoles.ADMIN])
   @Mutation(() => Gym)
-  @UseMiddleware(isAuth)
   async registerGym(
     @Arg('registerGym') registerInput: RegisterGym,
     @Ctx() ctx: Context

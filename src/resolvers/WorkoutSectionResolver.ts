@@ -1,28 +1,20 @@
 import { UserInputError } from 'apollo-server-express';
-import {
-  Arg,
-  Ctx,
-  Mutation,
-  Query,
-  Resolver,
-  UseMiddleware,
-} from 'type-graphql';
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { authorizationRoles } from '../constants/auth';
 import { Context } from '../context/prisma';
-import { isAuth } from '../middleware/isAuth';
 import { WorkoutSection, WorkoutSectionInput } from '../schema/WorkoutSection';
 
 @Resolver(WorkoutSection)
 export class WorkoutSectionResolver {
+  @Authorized()
   @Query(() => WorkoutSection)
-  @UseMiddleware(isAuth)
   async getWorkoutSection(@Arg('id') id: number, @Ctx() ctx: Context) {
     return await ctx.prisma.workoutSection.findUnique({
       where: { id },
     });
   }
-
+  @Authorized([authorizationRoles.ADMIN])
   @Mutation(() => WorkoutSection)
-  @UseMiddleware(isAuth)
   async createWorkoutSection(
     @Arg('workoutSectionIntput') input: WorkoutSectionInput,
     @Ctx() ctx: Context

@@ -1,35 +1,28 @@
 import { UserInputError } from 'apollo-server-express';
-import {
-  Arg,
-  Ctx,
-  Mutation,
-  Query,
-  Resolver,
-  UseMiddleware,
-} from 'type-graphql';
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { authorizationRoles } from '../constants/auth';
 import { Context } from '../context/prisma';
-import { isAuth } from '../middleware/isAuth';
 import { Workout, WorkoutInput } from '../schema/Workout';
 import { externalWorkoutApi } from '../service/externalWorkoutApi';
 
 @Resolver(Workout)
 export class WorkoutResolver {
+  @Authorized()
   @Query(() => Workout)
-  @UseMiddleware(isAuth)
   async getWorkoutByDay(
     @Arg('day') day: number,
     @Arg('type') type: string,
     @Ctx() ctx: Context
   ) {
     const externalApi = await ctx.prisma.workoutExternalApi.findUnique({
-      where: { gymId: ctx.payload.gymId },
+      where: { gymId: ctx.payload.user.gymId },
     });
 
     const workouts = await externalWorkoutApi(externalApi);
     if (workouts) return workouts;
 
     return await ctx.prisma.workout.findFirst({
-      where: { dayOfTheWeek: day, type, gymId: ctx.payload.gymId },
+      where: { dayOfTheWeek: day, type, gymId: ctx.payload.user.gymId },
       select: {
         type: true,
         workoutSection: {
@@ -45,15 +38,14 @@ export class WorkoutResolver {
       },
     });
   }
-
+  @Authorized([authorizationRoles.ADMIN])
   @Mutation(() => Workout)
-  @UseMiddleware(isAuth)
   async createWorkout(
     @Arg('workoutIntput') input: WorkoutInput,
     @Ctx() ctx: Context
   ) {
     const { dayOfTheWeek, type } = input;
-    const { gymId } = ctx.payload;
+    const { gymId } = ctx.payload.user;
     const workout = await ctx.prisma.workout.findFirst({
       where: { dayOfTheWeek, type, gymId },
     });

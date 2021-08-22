@@ -5,10 +5,10 @@ import cors from 'cors';
 import express from 'express';
 import { GraphQLScalarType } from 'graphql';
 import { DateTimeResolver } from 'graphql-scalars';
-import helmet from 'helmet';
 import { verify } from 'jsonwebtoken';
 import 'reflect-metadata';
 import { buildSchema } from 'type-graphql';
+import { authChecker } from './middleware/AuthChecker';
 import { GymClassResolver, GymResolver, UserResolver } from './resolvers';
 import { WorkoutExternalApiResolver } from './resolvers/WorkoutExternalApiResolver';
 import { WorkoutResolver } from './resolvers/WorkoutResolver';
@@ -24,7 +24,7 @@ const main = async () => {
   const app = express();
   app.use(cors({ origin: process.env.ORIGIN, credentials: true }));
   app.use(cookieParser());
-  app.use(helmet());
+  // app.use(helmet());
   const prisma = new PrismaClient();
 
   app.post('/refresh_token', async (req, res) => {
@@ -67,6 +67,7 @@ const main = async () => {
       WorkoutExternalApiResolver,
     ],
     scalarsMap: [{ type: GraphQLScalarType, scalar: DateTimeResolver }],
+    authChecker,
   });
 
   const server = new ApolloServer({

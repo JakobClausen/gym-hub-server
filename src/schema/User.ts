@@ -1,5 +1,6 @@
 import { IsEmail, MinLength } from 'class-validator';
 import 'reflect-metadata';
+import { AuthorizationRoleTypes } from 'src/types/authTypes';
 import { Field, ID, InputType, ObjectType } from 'type-graphql';
 import { Gym } from './Gym';
 
@@ -25,6 +26,8 @@ export class User {
   email: string;
 
   password: string;
+
+  role: AuthorizationRoleTypes;
 
   @Field()
   tokenVersion: number;
